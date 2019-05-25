@@ -1,0 +1,30 @@
+ <!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="UTF-8">
+    <title>title</title>
+  </head>
+  <body>
+    <h2>User</h2>
+    <p>
+      ID: <span id="userId"></span>
+      <br/>
+      Name: <span id="username"></span>
+    </p>
+
+    <h2>Invites</h2>
+    <ul id="inviteList">
+
+    </ul>
+    Guild ID:<br>
+    <input type="text" id="newInviteGuildID" /><br/>
+    <button onclick="createInvite()">Add</button>
+
+    <h2>Invites by Guild ID</h2>
+    <input type="text" id="invitesListGuildID" /><br/>
+    <button onclick="getInvitesByGuild()">Get</button>
+    <h3 id="selectedGuild"></h3>
+    <ul id="inviteListByGuild"></ul>
+  </body>
+  <script src="index.js"></script> 
+</html>

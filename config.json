@@ -1,0 +1,10 @@
+{
+  "token": "",
+  "database": "mongodb://localhost:27017/test",
+  "sessionSecret": "keyboard cat",
+  "port": 3000,
+  "redirectURI": "http://localhost:3000/authorize",
+  "clientID": "",
+  "clientSecret": "",
+  "inviteExpirationDays": 2
+}
