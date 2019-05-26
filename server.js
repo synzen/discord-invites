@@ -74,7 +74,8 @@ app.get('/authorize', async (req, res) => {
 
     req.session.identity = await fetchUser.info(req.session.identity ? req.session.identity.id : null, req.session.token.access_token) // Uses the /users/@me discord API route
     const pendingInviteCode = pendingUserInvites.get(req.sessionID)
-    const pendingInvite = await dbOps.pendingInvites.get(pendingInviteCode)
+    let pendingInvite
+    if (pendingInviteCode) pendingInvite = await dbOps.pendingInvites.get(pendingInviteCode)
     if (pendingInviteCode && pendingInvite) {
       const { status, message, originalResponse } = await putUserInGuild(req.session, pendingInvite.guild)
 
