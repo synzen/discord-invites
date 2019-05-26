@@ -123,7 +123,7 @@ app.get('/invite/:code', async (req, res, next) => {
     }
 
     // 200 response code, Use the invite
-    console.log(`User ${req.session.identity.id} has been added to guild ${pendingInvite.guild} through invite ${pendingInviteCode}`)
+    console.log(`User ${req.session.identity.id} has been added to guild ${pendingInvite.guild} through invite ${params.code}`)
     dbOps.pendingInvites.use(pendingInvite.code, req.session.identity.id)
     res.send('Successfully invited to guild')
   } catch (err) {
