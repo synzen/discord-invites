@@ -10,6 +10,7 @@ const discordAPIConstants = require('./constants/discordAPI.js')
 const discordAPIHeaders = require('./constants/discordAPIHeaders')
 const fetchUser = require('./util/fetchUser.js')
 const dbOps = require('./util/dbOps.js')
+const requestIp = require('request-ip')
 const SCOPES = 'identify guilds guilds.join'
 const tokenConfig = code => { return { code, redirect_uri: config.redirectURI, scope: SCOPES } }
 const apiRoutes = require('./routes/api/index.js')
@@ -45,6 +46,7 @@ async function putUserInGuild (session, guild) {
   }
 }
 
+app.set('trust proxy', true)
 app.use(express.json())
 app.use(session({
   secret: 'session secret',
@@ -73,7 +75,7 @@ app.get('/authorize', async (req, res) => {
     // console.log('auth object', req.session.token)
 
     req.session.identity = await fetchUser.info(req.session.identity ? req.session.identity.id : null, req.session.token.access_token) // Uses the /users/@me discord API route
-    const pendingInviteCode = pendingUserInvites.get(req.sessionID)
+    const pendingInviteCode = pendingUserInvites.get(requestIp.getClientIp(req))
     let pendingInvite
     if (pendingInviteCode) pendingInvite = await dbOps.pendingInvites.get(pendingInviteCode)
     if (pendingInviteCode && pendingInvite) {
@@ -89,6 +91,7 @@ app.get('/authorize', async (req, res) => {
       // 200 response code, use the invite then
       console.log(`User ${req.session.identity.id} has been added to guild ${pendingInvite.guild} through invite ${pendingInviteCode}`)
       await dbOps.pendingInvites.use(pendingInviteCode, req.session.identity.id)
+      return res.send('Successfully invited to guild')
     }
     res.redirect('/')
   } catch (err) {
@@ -108,7 +111,8 @@ app.get('/invite/:code', async (req, res, next) => {
     // Check if the invite code exists. If not, redirect to login
     if (!pendingInvite) return res.status(400).send('No such invite')
     if (!req.session.identity) {
-      pendingUserInvites.set(req.sessionID, params.code)
+      const clientIP = requestIp.getClientIp(req)
+      if (clientIP) pendingUserInvites.set(clientIP, params.code)
       return res.redirect('/login')
     }
     
