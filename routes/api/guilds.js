@@ -2,6 +2,7 @@ const express = require('express')
 const dbOps = require('../../util/dbOps.js')
 const formatError = require('./util/formatError.js')
 const guilds = express.Router({ mergeParams: true })
+const fetchUser = require('../../util/fetchUser.js')
 
 // Middleware
 guilds.use((req, res, next) => {
@@ -12,8 +13,14 @@ guilds.use((req, res, next) => {
 guilds.post('/invites', async (req, res, next) => {
   try {
     // Creates an invite URL for the guild specified in url params
+    const guildId = req.params.guild
+
+    // Check if the user is in this guild
+    const userGuilds = await fetchUser.guilds(req.session.identity.id, req.session.token.access_token)
+    if (userGuilds.filter(guild => guild.id === guildId).length === 0) return res.status(403).json(formatError(403, 'Unauthorized guild'))
+
     // Returns a JSON response with the new invite url
-    const newInvite = await dbOps.pendingInvites.create(req.session.identity.id, req.params.guild)
+    const newInvite = await dbOps.pendingInvites.create(req.session.identity.id, guildId)
 
     // The url is only for the front-end's convenience
     res.json({ ...newInvite, url: `${req.protocol}://${req.get('host')}/invite/${newInvite.code}` })
