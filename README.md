@@ -14,3 +14,6 @@
 3. Run `node server`
 4. Go to http://localhost:port/login (replace port with your config port). If you go to the main page without logging in, it will be mostly empty because you are unauthorized. Log in first.
 5. Access API features on http://localhost:port
+
+
+The idea for this (which is an interesting one) is credited to https://github.com/shikhir-arora.
