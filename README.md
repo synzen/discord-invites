@@ -1,5 +1,7 @@
 # discord-invites
 
+This project preserves the history of who gets invited for a particular server by recording the inviter and invitee of every invite into a database.
+
 ## Instructions
 
 1. `npm install`
